@@ -16,7 +16,7 @@ const emit = defineEmits<{
   openEmailAuthDialog: []
 }>()
 
-const errorMessage = ref<string | null>(null)
+const errorMessage = ref('')
 const visible = computed(() => !!props.action && !props.emailAuthVisible)
 const header = computed(() =>
   props.action === AuthAction.JOIN ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
@@ -33,7 +33,7 @@ const emailButtonAttributes = computed(() =>
 )
 
 async function continueWithGoogle() {
-  errorMessage.value = null
+  errorMessage.value = ''
   try {
     await signInWithPopup(auth, new GoogleAuthProvider())
     emit('closeDialog')
@@ -52,7 +52,7 @@ async function continueWithGoogle() {
 }
 
 function handleClose() {
-  errorMessage.value = null
+  errorMessage.value = ''
   emit('closeDialog')
 }
 </script>
