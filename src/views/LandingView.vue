@@ -1,34 +1,32 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import Button from 'primevue/button'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
+import { useAuthDialog } from '@/composables/useAuthDialog'
 import { AuthAction } from '@/types'
 
-const action = ref<AuthAction | null>(null)
-const emailAuthVisible = ref(false)
-
-function closeAllDialogs() {
-  action.value = null
-  emailAuthVisible.value = false
-}
+const authDialog = useAuthDialog()
 </script>
 
 <template>
   <p>Una plataforma que conecta usuarios con prestadores de servicios verificados</p>
-  <Button label="Iniciar sesión" variant="text" @click="action = AuthAction.LOGIN" />
-  <Button label="Únete" variant="outlined" @click="action = AuthAction.JOIN" />
+  <Button label="Iniciar sesión" variant="text" @click="authDialog.open(AuthAction.LOGIN)" />
+  <Button label="Únete" variant="outlined" @click="authDialog.open(AuthAction.JOIN)" />
+
   <AuthSelectorDialog
-    :action
-    :emailAuthVisible
-    @closeDialog="action = null"
-    @changeAction="(newAction) => (action = newAction)"
-    @openEmailAuthDialog="emailAuthVisible = true"
+    :visible="authDialog.step.value.stage === 'selector'"
+    :action="authDialog.step.value.action!"
+    :errorMessage="authDialog.errorMessage.value"
+    @update:visible="authDialog.close"
+    @open="authDialog.open"
+    @goToEmail="authDialog.goToEmail"
+    @continueWithGoogle="authDialog.continueWithGoogle"
   />
+
   <EmailAuthDialog
-    :action
-    :emailAuthVisible
-    @closeDialog="emailAuthVisible = false"
-    @authCompleted="closeAllDialogs"
+    :visible="authDialog.step.value.stage === 'email'"
+    :errorMessage="authDialog.errorMessage.value"
+    @goBack="authDialog.goBackToSelector"
+    @continueWithEmail="authDialog.continueWithEmail"
   />
 </template>
