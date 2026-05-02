@@ -15,13 +15,15 @@ const props = defineProps<{ action: AuthAction | null; emailAuthVisible: boolean
 const email = ref('')
 const password = ref('')
 const isButtonDisabled = computed(() => !(!!email.value.trim() && !!password.value.trim()))
-const visible = computed(() => (props.emailAuthVisible ? true : false))
+const visible = computed(() => props.emailAuthVisible)
 
 async function continueWithEmail() {
   try {
-    if (props.action === AuthAction.LOGIN)
-      return await signInWithEmailAndPassword(auth, email.value, password.value)
-    await createUserWithEmailAndPassword(auth, email.value, password.value)
+    if (props.action === AuthAction.LOGIN) {
+      await signInWithEmailAndPassword(auth, email.value, password.value)
+    } else {
+      await createUserWithEmailAndPassword(auth, email.value, password.value)
+    }
     emit('authCompleted')
   } catch (error) {
     console.error(error)
