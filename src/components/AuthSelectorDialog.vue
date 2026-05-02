@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import Message from 'primevue/message'
 import { AuthAction } from '@/types'
-import { computed } from 'vue'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { computed, ref } from 'vue'
+import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '@/firebase'
+import type { FirebaseError } from 'firebase/app'
+import getErrorMessage from '@/utils/getErrorMessage'
 
 const props = defineProps<{ action: AuthAction | null; emailAuthVisible: boolean }>()
 const emit = defineEmits<{
@@ -13,6 +16,7 @@ const emit = defineEmits<{
   openEmailAuthDialog: []
 }>()
 
+const errorMessage = ref<string | null>(null)
 const visible = computed(() => !!props.action && !props.emailAuthVisible)
 const header = computed(() =>
   props.action === AuthAction.JOIN ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
@@ -29,17 +33,33 @@ const emailButtonAttributes = computed(() =>
 )
 
 async function continueWithGoogle() {
+  errorMessage.value = null
   try {
     await signInWithPopup(auth, new GoogleAuthProvider())
     emit('closeDialog')
   } catch (error) {
-    console.error(error)
+    const errorCode = (error as FirebaseError).code
+
+    if (
+      !(
+        errorCode === AuthErrorCodes.POPUP_CLOSED_BY_USER ||
+        errorCode === AuthErrorCodes.EXPIRED_POPUP_REQUEST
+      )
+    ) {
+      errorMessage.value = getErrorMessage(errorCode)
+    }
   }
+}
+
+function handleClose() {
+  errorMessage.value = null
+  emit('closeDialog')
 }
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal :header @update:visible="$emit('closeDialog')">
+  <Dialog v-model:visible="visible" modal :header @update:visible="handleClose">
+    <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
     <span>
       {{ spanText.question }}
       <Button
