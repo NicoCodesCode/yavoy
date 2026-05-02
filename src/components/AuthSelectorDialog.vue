@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import type { FirebaseError } from 'firebase/app'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
-import { AuthAction } from '@/types'
-import { computed, ref } from 'vue'
-import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '@/firebase'
-import type { FirebaseError } from 'firebase/app'
+import { AuthAction } from '@/types'
 import getErrorMessage from '@/utils/getErrorMessage'
 
-const props = defineProps<{ action: AuthAction | null; emailAuthVisible: boolean }>()
+const props = defineProps<{
+  action: AuthAction | null
+  emailAuthVisible: boolean
+}>()
+
 const emit = defineEmits<{
   closeDialog: []
   changeAction: [newAction: AuthAction]
@@ -17,20 +21,28 @@ const emit = defineEmits<{
 }>()
 
 const errorMessage = ref('')
+
 const visible = computed(() => !!props.action && !props.emailAuthVisible)
+
+const isJoining = computed(() => props.action === AuthAction.JOIN)
+
 const header = computed(() =>
-  props.action === AuthAction.JOIN ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
+  isJoining.value ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
 )
+
 const spanText = computed(() =>
-  props.action === AuthAction.JOIN
+  isJoining.value
     ? { question: '¿Ya tienes una cuenta?', action: 'Iniciar sesión' }
     : { question: '¿No tienes una cuenta?', action: 'Únete aquí' },
 )
+
 const emailButtonAttributes = computed(() =>
-  props.action === AuthAction.JOIN
+  isJoining.value
     ? { label: 'O regístrate con el correo electrónico', variant: 'link' }
     : { label: 'Continuar con correo electrónico', variant: 'outlined' },
 )
+
+const oppositeAction = computed(() => (isJoining.value ? AuthAction.LOGIN : AuthAction.JOIN))
 
 async function continueWithGoogle() {
   errorMessage.value = ''
@@ -38,15 +50,13 @@ async function continueWithGoogle() {
     await signInWithPopup(auth, new GoogleAuthProvider())
     emit('closeDialog')
   } catch (error) {
-    const errorCode = (error as FirebaseError).code
+    const { code } = error as FirebaseError
 
-    if (
-      !(
-        errorCode === AuthErrorCodes.POPUP_CLOSED_BY_USER ||
-        errorCode === AuthErrorCodes.EXPIRED_POPUP_REQUEST
-      )
-    ) {
-      errorMessage.value = getErrorMessage(errorCode)
+    const isIgnoredError =
+      code === AuthErrorCodes.POPUP_CLOSED_BY_USER || code === AuthErrorCodes.EXPIRED_POPUP_REQUEST
+
+    if (!isIgnoredError) {
+      errorMessage.value = getErrorMessage(code)
     }
   }
 }
@@ -63,21 +73,19 @@ function handleClose() {
     <span>
       {{ spanText.question }}
       <Button
-        @click="
-          $emit('changeAction', action === AuthAction.JOIN ? AuthAction.LOGIN : AuthAction.JOIN)
-        "
         :label="spanText.action"
         variant="link"
+        @click="emit('changeAction', oppositeAction)"
       />
     </span>
     <div>
-      <Button @click="continueWithGoogle" label="Continuar con Google" icon="pi pi-google" />
+      <Button label="Continuar con Google" icon="pi pi-google" @click="continueWithGoogle" />
     </div>
     <div>
       <Button
-        @click="$emit('openEmailAuthDialog')"
         :label="emailButtonAttributes.label"
         :variant="emailButtonAttributes.variant"
+        @click="emit('openEmailAuthDialog')"
       />
     </div>
   </Dialog>

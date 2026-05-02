@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
-import { AuthAction } from '@/types'
 import { ref } from 'vue'
+import Button from 'primevue/button'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
+import { AuthAction } from '@/types'
 
 const action = ref<AuthAction | null>(null)
 const emailAuthVisible = ref(false)
@@ -16,19 +16,19 @@ function closeAllDialogs() {
 
 <template>
   <p>Una plataforma que conecta usuarios con prestadores de servicios verificados</p>
-  <Button @click="action = AuthAction.LOGIN" label="Iniciar sesión" variant="text" />
-  <Button @click="action = AuthAction.JOIN" label="Únete" variant="outlined" />
+  <Button label="Iniciar sesión" variant="text" @click="action = AuthAction.LOGIN" />
+  <Button label="Únete" variant="outlined" @click="action = AuthAction.JOIN" />
   <AuthSelectorDialog
+    :action
+    :emailAuthVisible
     @closeDialog="action = null"
     @changeAction="(newAction) => (action = newAction)"
     @openEmailAuthDialog="emailAuthVisible = true"
-    :action
-    :emailAuthVisible
   />
   <EmailAuthDialog
-    @closeDialog="emailAuthVisible = false"
-    @authCompleted="closeAllDialogs"
     :action
     :emailAuthVisible
+    @closeDialog="emailAuthVisible = false"
+    @authCompleted="closeAllDialogs"
   />
 </template>

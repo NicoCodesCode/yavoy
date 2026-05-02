@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { auth } from '@/firebase'
 import { signOut, type User } from 'firebase/auth'
 import Button from 'primevue/button'
+import { auth } from '@/firebase'
 
 defineProps<{ currentUser: User }>()
 
@@ -16,5 +16,5 @@ async function logout() {
 
 <template>
   <h2>Bienvenido, {{ currentUser.email }}!</h2>
-  <Button @click="logout" label="Cerrar sesión" variant="outlined" severity="danger" />
+  <Button label="Cerrar sesión" variant="outlined" severity="danger" @click="logout" />
 </template>

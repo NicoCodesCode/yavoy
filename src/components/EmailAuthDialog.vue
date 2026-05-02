@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import Dialog from 'primevue/dialog'
-import Button from 'primevue/button'
-import Message from 'primevue/message'
 import { computed, ref } from 'vue'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import type { FirebaseError } from 'firebase/app'
+import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import IftaLabel from 'primevue/iftalabel'
 import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
 import Password from 'primevue/password'
-import { AuthAction } from '@/types'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/firebase'
-import type { FirebaseError } from 'firebase/app'
+import { AuthAction } from '@/types'
 import getErrorMessage from '@/utils/getErrorMessage'
 
-const emit = defineEmits(['closeDialog', 'authCompleted'])
-const props = defineProps<{ action: AuthAction | null; emailAuthVisible: boolean }>()
+const props = defineProps<{
+  action: AuthAction | null
+  emailAuthVisible: boolean
+}>()
+
+const emit = defineEmits<{
+  closeDialog: []
+  authCompleted: []
+}>()
 
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
-const isButtonDisabled = computed(() => !(!!email.value.trim() && !!password.value.trim()))
+
 const visible = computed(() => props.emailAuthVisible)
+const isButtonDisabled = computed(() => !email.value.trim() || !password.value.trim())
 
 async function continueWithEmail() {
   errorMessage.value = ''
@@ -46,7 +54,7 @@ function handleClose() {
 <template>
   <Dialog v-model:visible="visible" modal :closable="false">
     <template #header>
-      <Button @click="handleClose" label="Volver" icon="pi pi-arrow-left" variant="link" />
+      <Button label="Volver" icon="pi pi-arrow-left" variant="link" @click="handleClose" />
     </template>
     <h2>Continuar con tu correo electrónico</h2>
     <form @submit.prevent="continueWithEmail">
