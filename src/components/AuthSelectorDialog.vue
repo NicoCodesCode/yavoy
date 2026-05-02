@@ -6,10 +6,14 @@ import { computed } from 'vue'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '@/firebase'
 
-const emit = defineEmits<{ closeDialog: []; changeAction: [newAction: AuthAction] }>()
-const props = defineProps<{ action: AuthAction | null }>()
+const props = defineProps<{ action: AuthAction | null; emailAuthVisible: boolean }>()
+const emit = defineEmits<{
+  closeDialog: []
+  changeAction: [newAction: AuthAction]
+  openEmailAuthDialog: []
+}>()
 
-const visible = computed(() => !!props.action)
+const visible = computed(() => !!props.action && !props.emailAuthVisible)
 const header = computed(() =>
   props.action === AuthAction.JOIN ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
 )
@@ -36,20 +40,25 @@ async function continueWithGoogle() {
 
 <template>
   <Dialog v-model:visible="visible" modal :header @update:visible="$emit('closeDialog')">
-    <span
-      >{{ spanText.question }}
+    <span>
+      {{ spanText.question }}
       <Button
         @click="
           $emit('changeAction', action === AuthAction.JOIN ? AuthAction.LOGIN : AuthAction.JOIN)
         "
         :label="spanText.action"
         variant="link"
-    /></span>
+      />
+    </span>
     <div>
       <Button @click="continueWithGoogle" label="Continuar con Google" icon="pi pi-google" />
     </div>
     <div>
-      <Button :label="emailButtonAttributes.label" :variant="emailButtonAttributes.variant" />
+      <Button
+        @click="$emit('openEmailAuthDialog')"
+        :label="emailButtonAttributes.label"
+        :variant="emailButtonAttributes.variant"
+      />
     </div>
   </Dialog>
 </template>

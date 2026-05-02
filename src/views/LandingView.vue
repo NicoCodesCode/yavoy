@@ -3,8 +3,15 @@ import Button from 'primevue/button'
 import { AuthAction } from '@/types'
 import { ref } from 'vue'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
+import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
 
 const action = ref<AuthAction | null>(null)
+const emailAuthVisible = ref(false)
+
+function closeAllDialogs() {
+  action.value = null
+  emailAuthVisible.value = false
+}
 </script>
 
 <template>
@@ -14,6 +21,14 @@ const action = ref<AuthAction | null>(null)
   <AuthSelectorDialog
     @closeDialog="action = null"
     @changeAction="(newAction) => (action = newAction)"
+    @openEmailAuthDialog="emailAuthVisible = true"
     :action
+    :emailAuthVisible
+  />
+  <EmailAuthDialog
+    @closeDialog="emailAuthVisible = false"
+    @authCompleted="closeAllDialogs"
+    :action
+    :emailAuthVisible
   />
 </template>
