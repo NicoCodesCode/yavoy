@@ -5,8 +5,6 @@ import { ref } from 'vue'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 
 const action = ref<AuthAction | null>(null)
-
-// const signInVisible = computed(() => (action.value === AuthAction.LOGIN ? true : false))
 </script>
 
 <template>
