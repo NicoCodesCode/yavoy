@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import { AuthAction } from '@/types'
+import type { AuthAction } from '@/composables/useAuth'
 
 defineEmits<{
   open: [action: AuthAction]
@@ -25,13 +25,13 @@ const { currentUser, logout } = useAuth()
     <div v-else class="flex items-center gap-3">
       <button
         class="px-4 py-2 text-sm font-semibold text-zinc-900 rounded-sm cursor-pointer hover:text-[#1dbf73] transition-colors"
-        @click="$emit('open', AuthAction.LOGIN)"
+        @click="$emit('open', 'login')"
       >
         Iniciar sesión
       </button>
       <button
         class="px-4 py-2 text-sm font-semibold border-2 border-[#1dbf73] text-zinc-900 rounded-sm cursor-pointer hover:text-white hover:bg-[#1dbf73] transition-colors"
-        @click="$emit('open', AuthAction.JOIN)"
+        @click="$emit('open', 'join')"
       >
         Únete
       </button>

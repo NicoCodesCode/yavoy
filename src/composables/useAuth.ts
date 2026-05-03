@@ -11,20 +11,18 @@ import {
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import type { FirebaseError } from 'firebase/app'
 import { auth, db } from '@/firebase'
-import { AuthAction } from '@/types'
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 
 export type AuthStage = 'idle' | 'selector' | 'email' | 'onboarding'
+
+export type AuthAction = 'join' | 'login'
 
 export type AuthStep = {
   stage: AuthStage
   action: AuthAction | null
 }
 
-export enum UserRole {
-  CLIENT = 'CLIENT',
-  PROVIDER = 'PROVIDER',
-}
+export type UserRole = 'client' | 'provider'
 
 export function useAuth() {
   const step = ref<AuthStep>({ stage: 'idle', action: null })
@@ -83,7 +81,7 @@ export function useAuth() {
   async function continueWithEmail(email: string, password: string) {
     errorMessage.value = ''
     try {
-      if (step.value.action === AuthAction.LOGIN) {
+      if (step.value.action === 'login') {
         await signInWithEmailAndPassword(auth, email, password)
         close()
       } else {
@@ -100,7 +98,7 @@ export function useAuth() {
     if (!user) return
     await setDoc(doc(db, 'users', user.uid), {
       name,
-      role: UserRole.CLIENT,
+      role: 'client',
       createdAt: serverTimestamp(),
     })
     close()

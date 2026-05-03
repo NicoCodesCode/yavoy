@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Dialog from 'primevue/dialog'
-import { AuthAction } from '@/types'
+import type { AuthAction } from '@/composables/useAuth'
 import DialogError from './DialogError.vue'
 
 const props = defineProps<{
@@ -17,7 +17,7 @@ const emit = defineEmits<{
   continueWithGoogle: []
 }>()
 
-const isJoining = computed(() => props.action === AuthAction.JOIN)
+const isJoining = computed(() => props.action === 'join')
 
 const header = computed(() =>
   isJoining.value ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
@@ -29,7 +29,7 @@ const spanText = computed(() =>
     : { question: '¿No tienes una cuenta?', action: 'Únete aquí' },
 )
 
-const oppositeAction = computed(() => (isJoining.value ? AuthAction.LOGIN : AuthAction.JOIN))
+const oppositeAction = computed(() => (isJoining.value ? 'login' : 'join'))
 </script>
 
 <template>
