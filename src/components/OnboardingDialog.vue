@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
+import DialogError from './DialogError.vue'
 
 const props = defineProps<{
   visible: boolean
-  errorMessage?: string
+  errorMessage: string
 }>()
 
 const emit = defineEmits<{
@@ -69,13 +70,7 @@ async function handleSubmit() {
         </div>
 
         <!-- Error -->
-        <div
-          v-if="errorMessage"
-          class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-sm"
-        >
-          <i class="pi pi-exclamation-circle text-red-400 text-sm" />
-          <span class="text-sm text-red-600">{{ errorMessage }}</span>
-        </div>
+        <DialogError :errorMessage />
 
         <button
           type="submit"
