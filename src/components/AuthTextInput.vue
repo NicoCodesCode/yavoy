@@ -2,7 +2,11 @@
 import { ref } from 'vue'
 
 defineEmits<{ input: [newValue: string] }>()
-defineProps<{ label: string; inputType: 'text' | 'email' | 'password' }>()
+defineProps<{
+  label: string
+  inputType: 'text' | 'email' | 'password'
+  id: 'name' | 'email' | 'password'
+}>()
 
 const model = defineModel()
 
@@ -16,18 +20,18 @@ function updateValue(e: Event) {
 
 <template>
   <div class="flex flex-col gap-1.5">
-    <label :for="inputType" class="text-xs font-medium text-zinc-800 tracking-wide uppercase">
+    <label :for="id" class="text-xs font-medium text-zinc-800 tracking-wide uppercase">
       {{ label }}
     </label>
     <div
       class="flex items-center border border-zinc-300 rounded-sm hover:border-zinc-500 focus-within:border-zinc-900 transition-colors"
     >
       <input
-        :id="inputType"
+        :id
         :type="showPassword ? 'text' : inputType"
         :value="model"
         @input="updateValue"
-        :autocomplete="inputType"
+        :autocomplete="id"
         class="flex-1 px-3 py-2.5 text-sm text-zinc-800 bg-transparent outline-none"
       />
       <button

@@ -1,28 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import Dialog from 'primevue/dialog'
-import DialogError from './DialogError.vue'
-import SubmitButton from './SubmitButton.vue'
 import { useAuth } from '@/stores/auth'
+import AuthDialogHeader from './AuthDialogHeader.vue'
+import OnboardingForm from './OnboardingForm.vue'
 
 const authStore = useAuth()
 
-const name = ref('')
-
 const isVisible = computed(() => authStore.step.stage === 'onboarding')
-
-const isButtonDisabled = computed(() => !name.value.trim() || authStore.isSubmitting)
-
-watch(isVisible, () => {
-  if (!isVisible.value) {
-    name.value = ''
-  }
-})
-
-async function handleSubmit() {
-  if (isButtonDisabled.value) return
-  authStore.completeOnboarding(name.value.trim())
-}
 </script>
 
 <template>
@@ -34,36 +19,10 @@ async function handleSubmit() {
     class="rounded-none! shadow-2xl! bg-zinc-100! border-0! p-0! w-full! max-w-sm!"
   >
     <div class="flex flex-col px-8 pt-8 pb-10 gap-6">
-      <!-- Header -->
-      <div>
-        <p class="text-xs tracking-widest text-[#1dbf73] font-medium mb-0.5">YaVoy!</p>
-        <h2 class="text-xl font-semibold text-zinc-800 leading-snug">Una última cosa</h2>
+      <AuthDialogHeader>
         <p class="text-sm text-zinc-500 mt-1">¿Cómo te llamas?</p>
-      </div>
-
-      <!-- Form -->
-      <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-        <div class="flex flex-col gap-1.5">
-          <label for="name" class="text-xs font-medium text-zinc-800 tracking-wide uppercase">
-            Nombre completo
-          </label>
-          <div
-            class="flex items-center border border-zinc-300 rounded-sm hover:border-zinc-500 focus-within:border-zinc-900 transition-colors"
-          >
-            <input
-              id="name"
-              v-model="name"
-              type="text"
-              autocomplete="name"
-              class="flex-1 px-3 py-2.5 text-sm text-zinc-800 bg-transparent outline-none"
-            />
-          </div>
-        </div>
-
-        <DialogError />
-
-        <SubmitButton :isButtonDisabled />
-      </form>
+      </AuthDialogHeader>
+      <OnboardingForm :isVisible />
     </div>
   </Dialog>
 </template>

@@ -5,9 +5,11 @@ import { computed } from 'vue'
 const authStore = useAuth()
 
 const isEmailStage = computed(() => (authStore.step.stage === 'email' ? true : false))
+const isOnboardingStage = computed(() => (authStore.step.stage === 'onboarding' ? true : false))
 
 const header = computed(() => {
   if (isEmailStage.value) return 'Continuar con email'
+  if (isOnboardingStage.value) return 'Una última cosa'
 
   return authStore.isJoining ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta'
 })
@@ -18,6 +20,7 @@ const header = computed(() => {
     <div>
       <p class="text-xs tracking-widest text-[#1dbf73] font-semibold mb-1">YaVoy!</p>
       <h2 class="text-xl font-semibold text-zinc-800 leading-snug">{{ header }}</h2>
+      <slot />
     </div>
     <button
       v-if="isEmailStage"
