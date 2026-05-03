@@ -97,12 +97,17 @@ export const useAuth = defineStore('auth', () => {
     isSubmitting.value = true
     const user = auth.currentUser
     if (!user) return
-    await setDoc(doc(db, 'users', user.uid), {
-      name,
-      role: 'client',
-      createdAt: serverTimestamp(),
-    })
-    close()
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        name,
+        role: 'client',
+        createdAt: serverTimestamp(),
+      })
+      close()
+    } catch (error) {
+      isSubmitting.value = false
+      errorMessage.value = 'No se pudo guardar tu información. Intenta de nuevo.'
+    }
   }
 
   async function logout() {
