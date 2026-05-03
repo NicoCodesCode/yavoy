@@ -11,7 +11,7 @@ import {
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import type { FirebaseError } from 'firebase/app'
 import { auth, db } from '@/firebase'
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 import type { AuthAction, AuthStep } from '@/types'
 
@@ -24,7 +24,13 @@ export const useAuth = defineStore('auth', () => {
 
   const isJoining = computed(() => step.value.action === 'join')
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userDoc = await getDoc(doc(db, 'users', user.uid))
+      if (!userDoc.exists()) {
+        step.value = { stage: 'onboarding', action: null }
+      }
+    }
     currentUser.value = user
     isLoading.value = false
   })
