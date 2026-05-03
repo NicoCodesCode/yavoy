@@ -22,19 +22,21 @@ const header = computed(() => {
       <h2 class="text-xl font-semibold text-zinc-800 leading-snug">{{ header }}</h2>
       <slot />
     </div>
-    <button
-      v-if="isEmailStage"
-      class="text-zinc-500 hover:text-zinc-700 transition-colors cursor-pointer"
-      @click="authStore.goBackToSelector"
-    >
-      <i class="pi pi-arrow-left text-sm" />
-    </button>
-    <button
-      v-else
-      class="text-zinc-500 hover:text-zinc-700 transition-colors mt-0.5 cursor-pointer"
-      @click="authStore.close"
-    >
-      <i class="pi pi-times text-sm" />
-    </button>
+    <template v-if="!isOnboardingStage">
+      <button
+        v-if="isEmailStage"
+        class="text-zinc-500 hover:text-zinc-700 transition-colors cursor-pointer"
+        @click="authStore.goBackToSelector"
+      >
+        <i class="pi pi-arrow-left text-sm" />
+      </button>
+      <button
+        v-else
+        class="text-zinc-500 hover:text-zinc-700 transition-colors mt-0.5 cursor-pointer"
+        @click="authStore.close"
+      >
+        <i class="pi pi-times text-sm" />
+      </button>
+    </template>
   </div>
 </template>
