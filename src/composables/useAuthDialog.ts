@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import type { FirebaseError } from 'firebase/app'
 import { auth } from '@/firebase'
@@ -68,6 +68,14 @@ export function useAuthDialog() {
     }
   }
 
+  async function logout() {
+    try {
+      await signOut(auth)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   function getErrorMessage(code: string) {
     switch (code) {
       case AuthErrorCodes.INVALID_IDP_RESPONSE:
@@ -98,5 +106,6 @@ export function useAuthDialog() {
     close,
     continueWithGoogle,
     continueWithEmail,
+    logout,
   }
 }
