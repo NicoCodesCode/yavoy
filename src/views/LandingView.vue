@@ -25,7 +25,7 @@ defineEmits<{
         class="px-8 py-3 text-sm font-medium bg-zinc-900 text-white rounded-sm cursor-pointer hover:bg-zinc-700 transition-colors"
         @click="$emit('open', 'join')"
       >
-        Comenzar gratis
+        Comenzar
       </button>
     </div>
   </main>
