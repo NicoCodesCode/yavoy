@@ -12,7 +12,7 @@ export type AuthStep = {
   action: AuthAction | null
 }
 
-export function useAuthDialog() {
+export function useAuth() {
   const step = ref<AuthStep>({ stage: 'idle', action: null })
   const errorMessage = ref('')
 
