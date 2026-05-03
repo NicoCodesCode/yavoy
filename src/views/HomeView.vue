@@ -3,6 +3,7 @@ import ExploreView from './ExploreView.vue'
 import LandingView from './LandingView.vue'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
+import OnboardingDialog from '@/components/OnboardingDialog.vue'
 import { useAuth } from '@/composables/useAuth'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import NavBar from '@/components/NavBar.vue'
@@ -17,6 +18,7 @@ const {
   close,
   continueWithGoogle,
   continueWithEmail,
+  completeOnboarding,
   currentUser,
   isLoading,
 } = useAuth()
@@ -51,5 +53,10 @@ const {
     :errorMessage
     @goBack="goBackToSelector"
     @continueWithEmail="continueWithEmail"
+  />
+  <OnboardingDialog
+    :visible="step.stage === 'onboarding'"
+    :errorMessage
+    @completeOnboarding="completeOnboarding"
   />
 </template>

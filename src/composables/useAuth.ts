@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import {
   AuthErrorCodes,
+  getAdditionalUserInfo,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
@@ -9,14 +10,20 @@ import {
 } from 'firebase/auth'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import type { FirebaseError } from 'firebase/app'
-import { auth } from '@/firebase'
+import { auth, db } from '@/firebase'
 import { AuthAction } from '@/types'
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 
-export type AuthStage = 'idle' | 'selector' | 'email'
+export type AuthStage = 'idle' | 'selector' | 'email' | 'onboarding'
 
 export type AuthStep = {
   stage: AuthStage
   action: AuthAction | null
+}
+
+export enum UserRole {
+  CLIENT = 'CLIENT',
+  PROVIDER = 'PROVIDER',
 }
 
 export function useAuth() {
@@ -55,8 +62,13 @@ export function useAuth() {
   async function continueWithGoogle() {
     errorMessage.value = ''
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider())
-      close()
+      const result = await signInWithPopup(auth, new GoogleAuthProvider())
+      const isNewUser = getAdditionalUserInfo(result)?.isNewUser
+      if (isNewUser) {
+        step.value = { stage: 'onboarding', action: null }
+      } else {
+        close()
+      }
     } catch (error) {
       const { code } = error as FirebaseError
       const isIgnoredError =
@@ -73,13 +85,25 @@ export function useAuth() {
     try {
       if (step.value.action === AuthAction.LOGIN) {
         await signInWithEmailAndPassword(auth, email, password)
+        close()
       } else {
         await createUserWithEmailAndPassword(auth, email, password)
+        step.value = { stage: 'onboarding', action: null }
       }
-      close()
     } catch (error) {
       errorMessage.value = getErrorMessage((error as FirebaseError).code)
     }
+  }
+
+  async function completeOnboarding(name: string) {
+    const user = auth.currentUser
+    if (!user) return
+    await setDoc(doc(db, 'users', user.uid), {
+      name,
+      role: UserRole.CLIENT,
+      createdAt: serverTimestamp(),
+    })
+    close()
   }
 
   async function logout() {
@@ -122,6 +146,7 @@ export function useAuth() {
     close,
     continueWithGoogle,
     continueWithEmail,
+    completeOnboarding,
     logout,
   }
 }

@@ -15,8 +15,11 @@ const emit = defineEmits<{
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
+const isSubmitting = ref(false)
 
-const isButtonDisabled = computed(() => !email.value.trim() || !password.value.trim())
+const isButtonDisabled = computed(
+  () => !email.value.trim() || !password.value.trim() || isSubmitting.value,
+)
 
 watch(
   () => props.visible,
@@ -27,6 +30,12 @@ watch(
     }
   },
 )
+
+async function handleSubmit() {
+  if (isButtonDisabled.value) return
+  isSubmitting.value = true
+  emit('continueWithEmail', email.value.trim(), password.value.trim())
+}
 </script>
 
 <template>
@@ -53,10 +62,7 @@ watch(
       </div>
 
       <!-- Form -->
-      <form
-        class="flex flex-col gap-4"
-        @submit.prevent="emit('continueWithEmail', email, password)"
-      >
+      <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
         <!-- Email -->
         <div class="flex flex-col gap-1.5">
           <label for="email" class="text-xs font-medium text-zinc-800 tracking-wide uppercase">
@@ -113,14 +119,18 @@ watch(
         <button
           type="submit"
           :disabled="isButtonDisabled"
-          class="px-8 py-3 text-sm font-medium bg-zinc-900 text-white rounded-sm cursor-pointer hover:bg-zinc-700 transition-colors"
+          class="w-full mt-1 px-4 py-2.5 text-sm font-medium rounded-sm transition-colors"
           :class="
             isButtonDisabled
               ? 'bg-zinc-300 text-zinc-500'
               : ' bg-zinc-900 text-zinc-100 hover:bg-zinc-700 cursor-pointer'
           "
         >
-          Continuar
+          <span v-if="isSubmitting" class="flex items-center justify-center gap-2">
+            <i class="pi pi-spin pi-spinner text-sm" />
+            Guardando...
+          </span>
+          <span v-else>Continuar</span>
         </button>
       </form>
     </div>
