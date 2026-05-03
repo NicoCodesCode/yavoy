@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/stores/auth'
 import { computed } from 'vue'
+import OutlinedButton from './OutlinedButton.vue'
 
 const authStore = useAuth()
 
@@ -11,13 +12,10 @@ const buttonText = computed(() =>
 
 <template>
   <div class="flex flex-col gap-3">
-    <button
-      class="px-4 py-2 text-sm font-semibold border-2 border-[#1dbf73] text-zinc-900 rounded-sm cursor-pointer hover:text-white hover:bg-[#1dbf73] transition-colors"
-      @click="authStore.continueWithGoogle"
-    >
+    <OutlinedButton @click="authStore.continueWithGoogle">
       <i class="pi pi-google text-base mr-2" />
       Continuar con Google
-    </button>
+    </OutlinedButton>
 
     <div class="flex items-center gap-3">
       <span class="flex-1 h-px bg-zinc-900" />

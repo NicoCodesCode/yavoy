@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuth } from '@/stores/auth'
+import OutlinedButton from './OutlinedButton.vue'
 
 const authStore = useAuth()
 </script>
@@ -24,12 +25,7 @@ const authStore = useAuth()
       >
         Iniciar sesión
       </button>
-      <button
-        class="px-4 py-2 text-sm font-semibold border-2 border-[#1dbf73] text-zinc-900 rounded-sm cursor-pointer hover:text-white hover:bg-[#1dbf73] transition-colors"
-        @click="authStore.open('join')"
-      >
-        Únete
-      </button>
+      <OutlinedButton @click="authStore.open('join')">Únete</OutlinedButton>
     </div>
   </header>
 </template>
