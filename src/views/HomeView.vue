@@ -6,8 +6,20 @@ import ExploreView from './ExploreView.vue'
 import LandingView from './LandingView.vue'
 import { useAuthDialog } from '@/composables/useAuthDialog'
 import { AuthAction } from '@/types'
+import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
+import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 
-const { open, logout } = useAuthDialog()
+const {
+  step,
+  errorMessage,
+  open,
+  goToEmail,
+  goBackToSelector,
+  close,
+  continueWithGoogle,
+  continueWithEmail,
+  logout,
+} = useAuthDialog()
 
 const currentUser = ref<User | null>(null)
 const isLoading = ref(true)
@@ -58,7 +70,32 @@ onAuthStateChanged(auth, (user) => {
     </header>
 
     <ExploreView v-if="currentUser" :currentUser />
-    <LandingView v-else />
+
+    <LandingView v-else>
+      <button
+        class="px-8 py-3 text-sm font-medium bg-zinc-900 text-white rounded-sm cursor-pointer hover:bg-zinc-700 transition-colors"
+        @click="open(AuthAction.JOIN)"
+      >
+        Comenzar gratis
+      </button>
+    </LandingView>
+
+    <AuthSelectorDialog
+      :visible="step.stage === 'selector'"
+      :action="step.action!"
+      :errorMessage
+      @update:visible="close"
+      @open="open"
+      @goToEmail="goToEmail"
+      @continueWithGoogle="continueWithGoogle"
+    />
+
+    <EmailAuthDialog
+      :visible="step.stage === 'email'"
+      :errorMessage
+      @goBack="goBackToSelector"
+      @continueWithEmail="continueWithEmail"
+    />
 
     <!-- Footer -->
     <footer class="px-8 py-5 border-t border-zinc-100">

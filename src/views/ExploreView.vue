@@ -5,7 +5,6 @@ defineProps<{ currentUser: User }>()
 </script>
 
 <template>
-  <!-- Content -->
   <main class="flex-1 flex flex-col items-center justify-center px-6 text-center">
     <div class="max-w-md">
       <div
