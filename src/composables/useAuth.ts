@@ -1,5 +1,12 @@
 import { ref } from 'vue'
-import { AuthErrorCodes, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
+import {
+  AuthErrorCodes,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  type User,
+} from 'firebase/auth'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import type { FirebaseError } from 'firebase/app'
 import { auth } from '@/firebase'
@@ -15,6 +22,13 @@ export type AuthStep = {
 export function useAuth() {
   const step = ref<AuthStep>({ stage: 'idle', action: null })
   const errorMessage = ref('')
+  const currentUser = ref<User | null>(null)
+  const isLoading = ref(true)
+
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user
+    isLoading.value = false
+  })
 
   function open(action: AuthAction) {
     step.value = { stage: 'selector', action }
@@ -100,6 +114,8 @@ export function useAuth() {
   return {
     step,
     errorMessage,
+    currentUser,
+    isLoading,
     open,
     goToEmail,
     goBackToSelector,

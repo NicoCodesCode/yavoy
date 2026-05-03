@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { onAuthStateChanged, type User } from 'firebase/auth'
-import { auth } from '@/firebase'
 import ExploreView from './ExploreView.vue'
 import LandingView from './LandingView.vue'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
 import { useAuth } from '@/composables/useAuth'
 import { AuthAction } from '@/types'
+import LoadingScreen from '@/components/LoadingScreen.vue'
 
 const {
   step,
@@ -16,31 +14,17 @@ const {
   goToEmail,
   goBackToSelector,
   close,
-  logout,
   continueWithGoogle,
   continueWithEmail,
+  currentUser,
+  isLoading,
+  logout,
 } = useAuth()
-
-const currentUser = ref<User | null>(null)
-const isLoading = ref(true)
-
-onAuthStateChanged(auth, (user) => {
-  currentUser.value = user
-  isLoading.value = false
-})
 </script>
 
 <template>
   <div class="min-h-screen bg-white flex flex-col">
-    <!-- Loading -->
-    <div v-if="isLoading" class="flex-1 flex items-center justify-center">
-      <div class="flex flex-col items-center gap-4">
-        <span class="text-xl tracking-widest text-zinc-300 font-semibold">YaVoy!</span>
-        <div
-          class="w-5 h-5 border-2 border-zinc-100 border-t-[#1dbf73] rounded-full animate-spin"
-        />
-      </div>
-    </div>
+    <LoadingScreen v-if="isLoading" />
 
     <template v-else>
       <!-- Nav -->
