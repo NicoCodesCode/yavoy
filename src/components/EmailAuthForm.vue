@@ -1,0 +1,42 @@
+<script setup lang="ts">
+import { useAuth } from '@/stores/auth'
+import { computed, ref, watch } from 'vue'
+import DialogError from './DialogError.vue'
+import SubmitButton from './SubmitButton.vue'
+import AuthTextInput from './AuthTextInput.vue'
+
+const authStore = useAuth()
+
+const props = defineProps<{ isVisible: boolean }>()
+
+const email = ref('')
+const password = ref('')
+
+const isButtonDisabled = computed(
+  () => !email.value.trim() || !password.value.trim() || authStore.isSubmitting,
+)
+
+function handleSubmit() {
+  if (isButtonDisabled.value) return
+  authStore.continueWithEmail(email.value.trim(), password.value.trim())
+}
+
+watch(
+  () => props.isVisible,
+  () => {
+    if (!props.isVisible) {
+      email.value = ''
+      password.value = ''
+    }
+  },
+)
+</script>
+
+<template>
+  <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
+    <AuthTextInput label="Email" inputType="text" v-model="email" />
+    <AuthTextInput label="Contraseña" inputType="password" v-model="password" />
+    <DialogError />
+    <SubmitButton :isButtonDisabled />
+  </form>
+</template>
