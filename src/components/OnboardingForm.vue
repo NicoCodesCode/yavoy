@@ -11,7 +11,9 @@ const props = defineProps<{ isVisible: boolean }>()
 
 const name = ref('')
 
-const isButtonDisabled = computed(() => !name.value.trim() || authStore.isSubmitting)
+const isButtonDisabled = computed(
+  () => !name.value.trim() || authStore.isSubmitting || name.value.trim().length > 50,
+)
 
 async function handleSubmit() {
   if (isButtonDisabled.value) return
