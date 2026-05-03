@@ -3,41 +3,31 @@ import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import DialogError from './DialogError.vue'
 import SubmitButton from './SubmitButton.vue'
+import { useAuth } from '@/stores/auth'
 
-const props = defineProps<{
-  visible: boolean
-  errorMessage: string
-}>()
-
-const emit = defineEmits<{
-  completeOnboarding: [name: string]
-}>()
+const authStore = useAuth()
 
 const name = ref('')
-const isSubmitting = ref(false)
 
-const isButtonDisabled = computed(() => !name.value.trim() || isSubmitting.value)
+const isVisible = computed(() => authStore.step.stage === 'onboarding')
 
-watch(
-  () => props.visible,
-  (isVisible) => {
-    if (!isVisible) {
-      name.value = ''
-      isSubmitting.value = false
-    }
-  },
-)
+const isButtonDisabled = computed(() => !name.value.trim() || authStore.isSubmitting)
+
+watch(isVisible, () => {
+  if (!isVisible.value) {
+    name.value = ''
+  }
+})
 
 async function handleSubmit() {
   if (isButtonDisabled.value) return
-  isSubmitting.value = true
-  emit('completeOnboarding', name.value.trim())
+  authStore.completeOnboarding(name.value.trim())
 }
 </script>
 
 <template>
   <Dialog
-    :visible
+    :visible="isVisible"
     modal
     :showHeader="false"
     :closable="false"
@@ -70,10 +60,9 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <!-- Error -->
-        <DialogError :errorMessage />
+        <DialogError />
 
-        <SubmitButton :isButtonDisabled :isSubmitting />
+        <SubmitButton :isButtonDisabled />
       </form>
     </div>
   </Dialog>

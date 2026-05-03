@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { AuthAction } from '@/composables/useAuth'
+import { useAuth } from '@/stores/auth'
 
-defineEmits<{
-  open: [action: AuthAction]
-}>()
+const authStore = useAuth()
 </script>
 
 <template>
@@ -23,7 +21,7 @@ defineEmits<{
       </p>
       <button
         class="px-8 py-3 text-sm font-medium bg-zinc-900 text-white rounded-sm cursor-pointer hover:bg-zinc-700 transition-colors"
-        @click="$emit('open', 'join')"
+        @click="authStore.open('join')"
       >
         Comenzar
       </button>

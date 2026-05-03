@@ -12,23 +12,15 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import type { FirebaseError } from 'firebase/app'
 import { auth, db } from '@/firebase'
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { defineStore } from 'pinia'
+import type { AuthAction, AuthStep } from '@/types'
 
-export type AuthStage = 'idle' | 'selector' | 'email' | 'onboarding'
-
-export type AuthAction = 'join' | 'login'
-
-export type AuthStep = {
-  stage: AuthStage
-  action: AuthAction | null
-}
-
-export type UserRole = 'client' | 'provider'
-
-export function useAuth() {
+export const useAuth = defineStore('auth', () => {
   const step = ref<AuthStep>({ stage: 'idle', action: null })
   const errorMessage = ref('')
   const currentUser = ref<User | null>(null)
   const isLoading = ref(true)
+  const isSubmitting = ref(false)
 
   onAuthStateChanged(auth, (user) => {
     currentUser.value = user
@@ -59,15 +51,18 @@ export function useAuth() {
 
   async function continueWithGoogle() {
     errorMessage.value = ''
+    isSubmitting.value = true
     try {
       const result = await signInWithPopup(auth, new GoogleAuthProvider())
       const isNewUser = getAdditionalUserInfo(result)?.isNewUser
       if (isNewUser) {
         step.value = { stage: 'onboarding', action: null }
+        isSubmitting.value = false
       } else {
         close()
       }
     } catch (error) {
+      isSubmitting.value = false
       const { code } = error as FirebaseError
       const isIgnoredError =
         code === AuthErrorCodes.POPUP_CLOSED_BY_USER ||
@@ -80,6 +75,7 @@ export function useAuth() {
 
   async function continueWithEmail(email: string, password: string) {
     errorMessage.value = ''
+    isSubmitting.value = true
     try {
       if (step.value.action === 'login') {
         await signInWithEmailAndPassword(auth, email, password)
@@ -87,13 +83,16 @@ export function useAuth() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password)
         step.value = { stage: 'onboarding', action: null }
+        isSubmitting.value = false
       }
     } catch (error) {
+      isSubmitting.value = false
       errorMessage.value = getErrorMessage((error as FirebaseError).code)
     }
   }
 
   async function completeOnboarding(name: string) {
+    isSubmitting.value = true
     const user = auth.currentUser
     if (!user) return
     await setDoc(doc(db, 'users', user.uid), {
@@ -138,6 +137,7 @@ export function useAuth() {
     errorMessage,
     currentUser,
     isLoading,
+    isSubmitting,
     open,
     goToEmail,
     goBackToSelector,
@@ -147,4 +147,4 @@ export function useAuth() {
     completeOnboarding,
     logout,
   }
-}
+})

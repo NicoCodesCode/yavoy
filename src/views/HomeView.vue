@@ -4,60 +4,29 @@ import LandingView from './LandingView.vue'
 import AuthSelectorDialog from '@/components/AuthSelectorDialog.vue'
 import EmailAuthDialog from '@/components/EmailAuthDialog.vue'
 import OnboardingDialog from '@/components/OnboardingDialog.vue'
-import { useAuth } from '@/composables/useAuth'
+import { useAuth } from '@/stores/auth'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import NavBar from '@/components/NavBar.vue'
 import AppFooter from '@/components/AppFooter.vue'
 
-const {
-  step,
-  errorMessage,
-  open,
-  goToEmail,
-  goBackToSelector,
-  close,
-  continueWithGoogle,
-  continueWithEmail,
-  completeOnboarding,
-  logout,
-  currentUser,
-  isLoading,
-} = useAuth()
+const authStore = useAuth()
 </script>
 
 <template>
   <div class="min-h-screen bg-white flex flex-col">
-    <LoadingScreen v-if="isLoading" />
+    <LoadingScreen v-if="authStore.isLoading" />
 
     <template v-else>
-      <NavBar @open="open" @logout="logout" :currentUser />
+      <NavBar />
 
-      <ExploreView v-if="currentUser" :currentUser />
-      <LandingView v-else @open="open" />
+      <ExploreView v-if="authStore.currentUser" />
+      <LandingView v-else />
 
       <AppFooter />
     </template>
   </div>
 
-  <!-- Dialogs -->
-  <AuthSelectorDialog
-    :visible="step.stage === 'selector'"
-    :action="step.action!"
-    :errorMessage
-    @update:visible="close"
-    @open="open"
-    @goToEmail="goToEmail"
-    @continueWithGoogle="continueWithGoogle"
-  />
-  <EmailAuthDialog
-    :visible="step.stage === 'email'"
-    :errorMessage
-    @goBack="goBackToSelector"
-    @continueWithEmail="continueWithEmail"
-  />
-  <OnboardingDialog
-    :visible="step.stage === 'onboarding'"
-    :errorMessage
-    @completeOnboarding="completeOnboarding"
-  />
+  <AuthSelectorDialog />
+  <EmailAuthDialog />
+  <OnboardingDialog />
 </template>

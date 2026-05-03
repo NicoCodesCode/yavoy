@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { User } from 'firebase/auth'
+import { useAuth } from '@/stores/auth'
 
-defineProps<{ currentUser: User }>()
+const authStore = useAuth()
 </script>
 
 <template>
@@ -13,7 +13,7 @@ defineProps<{ currentUser: User }>()
         <i class="pi pi-user text-[#1dbf73] text-lg" />
       </div>
       <h2 class="text-2xl font-semibold text-zinc-900 mb-2">Bienvenido de vuelta</h2>
-      <p class="text-sm text-zinc-400">{{ currentUser.email }}</p>
+      <p class="text-sm text-zinc-400">{{ authStore.currentUser?.email }}</p>
     </div>
   </main>
 </template>

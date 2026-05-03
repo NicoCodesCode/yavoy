@@ -3,46 +3,36 @@ import { computed, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import DialogError from './DialogError.vue'
 import SubmitButton from './SubmitButton.vue'
+import { useAuth } from '@/stores/auth'
 
-const props = defineProps<{
-  visible: boolean
-  errorMessage: string
-}>()
-
-const emit = defineEmits<{
-  goBack: []
-  continueWithEmail: [email: string, password: string]
-}>()
+const authStore = useAuth()
 
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
-const isSubmitting = ref(false)
+
+const isVisible = computed(() => authStore.step.stage === 'email')
 
 const isButtonDisabled = computed(
-  () => !email.value.trim() || !password.value.trim() || isSubmitting.value,
+  () => !email.value.trim() || !password.value.trim() || authStore.isSubmitting,
 )
 
-watch(
-  () => props.visible,
-  (isVisible) => {
-    if (!isVisible) {
-      email.value = ''
-      password.value = ''
-    }
-  },
-)
+watch(isVisible, () => {
+  if (!isVisible.value) {
+    email.value = ''
+    password.value = ''
+  }
+})
 
-async function handleSubmit() {
+function handleSubmit() {
   if (isButtonDisabled.value) return
-  isSubmitting.value = true
-  emit('continueWithEmail', email.value.trim(), password.value.trim())
+  authStore.continueWithEmail(email.value.trim(), password.value.trim())
 }
 </script>
 
 <template>
   <Dialog
-    :visible
+    :visible="isVisible"
     modal
     :showHeader="false"
     :closable="false"
@@ -57,7 +47,7 @@ async function handleSubmit() {
         </div>
         <button
           class="text-zinc-500 hover:text-zinc-700 transition-colors cursor-pointer"
-          @click="emit('goBack')"
+          @click="authStore.goBackToSelector"
         >
           <i class="pi pi-arrow-left text-sm" />
         </button>
@@ -109,10 +99,10 @@ async function handleSubmit() {
         </div>
 
         <!-- Error -->
-        <DialogError :errorMessage />
+        <DialogError />
 
         <!-- Submit -->
-        <SubmitButton :isButtonDisabled :isSubmitting />
+        <SubmitButton :isButtonDisabled />
       </form>
     </div>
   </Dialog>

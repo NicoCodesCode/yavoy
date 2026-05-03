@@ -1,23 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Dialog from 'primevue/dialog'
-import type { AuthAction } from '@/composables/useAuth'
 import DialogError from './DialogError.vue'
+import { useAuth } from '@/stores/auth'
 
-const props = defineProps<{
-  visible: boolean
-  action: AuthAction
-  errorMessage: string
-}>()
+const authStore = useAuth()
 
-const emit = defineEmits<{
-  'update:visible': [value: boolean]
-  open: [action: AuthAction]
-  goToEmail: []
-  continueWithGoogle: []
-}>()
+const isVisible = computed(() => authStore.step.stage === 'selector')
 
-const isJoining = computed(() => props.action === 'join')
+const isJoining = computed(() => authStore.step.action === 'join')
 
 const header = computed(() =>
   isJoining.value ? 'Crear una cuenta nueva' : 'Inicia sesión en tu cuenta',
@@ -34,11 +25,10 @@ const oppositeAction = computed(() => (isJoining.value ? 'login' : 'join'))
 
 <template>
   <Dialog
-    :visible
+    :visible="isVisible"
     modal
     :showHeader="false"
     :closable="false"
-    @update:visible="emit('update:visible', $event)"
     class="rounded-none! shadow-2xl! bg-zinc-100! border-0! p-0! w-full! max-w-sm!"
   >
     <div class="flex flex-col px-8 pt-8 pb-10 gap-6">
@@ -50,7 +40,7 @@ const oppositeAction = computed(() => (isJoining.value ? 'login' : 'join'))
         </div>
         <button
           class="text-zinc-500 hover:text-zinc-700 transition-colors mt-0.5 cursor-pointer"
-          @click="emit('update:visible', false)"
+          @click="authStore.close"
         >
           <i class="pi pi-times text-sm" />
         </button>
@@ -60,7 +50,7 @@ const oppositeAction = computed(() => (isJoining.value ? 'login' : 'join'))
       <div class="flex flex-col gap-3">
         <button
           class="px-4 py-2 text-sm font-semibold border-2 border-[#1dbf73] text-zinc-900 rounded-sm cursor-pointer hover:text-white hover:bg-[#1dbf73] transition-colors"
-          @click="emit('continueWithGoogle')"
+          @click="authStore.continueWithGoogle"
         >
           <i class="pi pi-google text-base mr-2" />
           Continuar con Google
@@ -74,7 +64,7 @@ const oppositeAction = computed(() => (isJoining.value ? 'login' : 'join'))
 
         <button
           class="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 border-2 border-zinc-700 rounded-sm text-sm font-medium text-zinc-700 hover:border-zinc-500 hover:text-zinc-500 hover:bg-zinc-200 transition-all cursor-pointer"
-          @click="emit('goToEmail')"
+          @click="authStore.goToEmail"
         >
           <i class="pi pi-envelope text-base mr-2" />
           {{ isJoining ? 'Regístrate con email' : 'Continuar con email' }}
@@ -82,14 +72,14 @@ const oppositeAction = computed(() => (isJoining.value ? 'login' : 'join'))
       </div>
 
       <!-- Error -->
-      <DialogError :errorMessage />
+      <DialogError />
 
       <!-- Switch action -->
       <p class="text-sm text-zinc-600 text-center">
         {{ spanText.question }}
         <button
           class="underline underline-offset-2 cursor-pointer hover:text-[#1dbf73] transition-colors ml-1"
-          @click="emit('open', oppositeAction)"
+          @click="authStore.open(oppositeAction)"
         >
           {{ spanText.action }}
         </button>
