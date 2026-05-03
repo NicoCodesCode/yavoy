@@ -11,7 +11,7 @@ import {
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import type { FirebaseError } from 'firebase/app'
 import { auth, db } from '@/firebase'
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { doc, getDoc, serverTimestamp, writeBatch } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 import type { AuthAction, AuthStep } from '@/types'
 
@@ -76,7 +76,7 @@ export const useAuth = defineStore('auth', () => {
         code === AuthErrorCodes.POPUP_CLOSED_BY_USER ||
         code === AuthErrorCodes.EXPIRED_POPUP_REQUEST
       if (!isIgnoredError) {
-        errorMessage.value = getErrorMessage(code)
+        errorMessage.value = getAuthErrorMessage(code)
       }
     }
   }
@@ -95,20 +95,41 @@ export const useAuth = defineStore('auth', () => {
       }
     } catch (error) {
       isSubmitting.value = false
-      errorMessage.value = getErrorMessage((error as FirebaseError).code)
+      errorMessage.value = getAuthErrorMessage((error as FirebaseError).code)
     }
   }
 
-  async function completeOnboarding(name: string) {
+  async function completeOnboarding(username: string) {
+    if (!currentUser.value) return
     isSubmitting.value = true
-    const user = auth.currentUser
-    if (!user) return
-    await setDoc(doc(db, 'users', user.uid), {
-      name,
-      role: 'client',
-      createdAt: serverTimestamp(),
-    })
-    close()
+    try {
+      if (!validateUsername(username)) {
+        errorMessage.value =
+          'El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede incluir letras, números y guiones bajos.'
+        return
+      }
+
+      const usernameDoc = await getDoc(doc(db, 'usernames', username))
+      if (usernameDoc.exists()) {
+        errorMessage.value = 'Este nombre de usuario ya está en uso.'
+        return
+      }
+
+      const batch = writeBatch(db)
+      batch.set(doc(db, 'users', currentUser.value.uid), {
+        username,
+        role: 'client',
+        createdAt: serverTimestamp(),
+      })
+      batch.set(doc(db, 'usernames', username), {
+        uid: currentUser.value.uid,
+      })
+      await batch.commit()
+
+      close()
+    } finally {
+      isSubmitting.value = false
+    }
   }
 
   async function logout() {
@@ -119,7 +140,7 @@ export const useAuth = defineStore('auth', () => {
     }
   }
 
-  function getErrorMessage(code: string) {
+  function getAuthErrorMessage(code: string) {
     switch (code) {
       case AuthErrorCodes.INVALID_IDP_RESPONSE:
         return 'Correo o contraseña incorrectos.'
@@ -138,6 +159,11 @@ export const useAuth = defineStore('auth', () => {
       default:
         return 'Ocurrió un error inesperado. Intenta de nuevo.'
     }
+  }
+
+  function validateUsername(username: string) {
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/
+    return usernameRegex.test(username)
   }
 
   return {

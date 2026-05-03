@@ -9,22 +9,20 @@ const authStore = useAuth()
 
 const props = defineProps<{ isVisible: boolean }>()
 
-const name = ref('')
+const username = ref('')
 
-const isButtonDisabled = computed(
-  () => !name.value.trim() || authStore.isSubmitting || name.value.trim().length > 50,
-)
+const isButtonDisabled = computed(() => !username.value.trim() || authStore.isSubmitting)
 
 async function handleSubmit() {
   if (isButtonDisabled.value) return
-  authStore.completeOnboarding(name.value.trim())
+  authStore.completeOnboarding(username.value.trim())
 }
 
 watch(
   () => props.isVisible,
   () => {
     if (!props.isVisible) {
-      name.value = ''
+      username.value = ''
     }
   },
 )
@@ -32,7 +30,7 @@ watch(
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <AuthTextInput label="Nombre completo" inputType="text" id="name" v-model="name" />
+    <AuthTextInput label="Nombre de usuario" inputType="text" id="username" v-model="username" />
     <AuthDialogError />
     <SubmitButton :isButtonDisabled />
   </form>

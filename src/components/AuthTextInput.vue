@@ -5,7 +5,7 @@ defineEmits<{ input: [newValue: string] }>()
 defineProps<{
   label: string
   inputType: 'text' | 'email' | 'password'
-  id: 'name' | 'email' | 'password'
+  id: 'username' | 'email' | 'password'
 }>()
 
 const model = defineModel()
