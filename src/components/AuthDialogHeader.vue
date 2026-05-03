@@ -4,8 +4,8 @@ import { computed } from 'vue'
 
 const authStore = useAuth()
 
-const isEmailStage = computed(() => (authStore.step.stage === 'email' ? true : false))
-const isOnboardingStage = computed(() => (authStore.step.stage === 'onboarding' ? true : false))
+const isEmailStage = computed(() => authStore.step.stage === 'email')
+const isOnboardingStage = computed(() => authStore.step.stage === 'onboarding')
 
 const header = computed(() => {
   if (isEmailStage.value) return 'Continuar con email'

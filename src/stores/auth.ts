@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   AuthErrorCodes,
   getAdditionalUserInfo,
@@ -14,7 +14,6 @@ import { auth, db } from '@/firebase'
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 import type { AuthAction, AuthStep } from '@/types'
-import { computed } from '@vue/reactivity'
 
 export const useAuth = defineStore('auth', () => {
   const step = ref<AuthStep>({ stage: 'idle', action: null })
@@ -23,7 +22,7 @@ export const useAuth = defineStore('auth', () => {
   const isLoading = ref(true)
   const isSubmitting = ref(false)
 
-  const isJoining = computed(() => (step.value.action === 'join' ? true : false))
+  const isJoining = computed(() => step.value.action === 'join')
 
   onAuthStateChanged(auth, (user) => {
     currentUser.value = user
