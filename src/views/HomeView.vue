@@ -19,6 +19,7 @@ const {
   continueWithGoogle,
   continueWithEmail,
   completeOnboarding,
+  logout,
   currentUser,
   isLoading,
 } = useAuth()
@@ -29,7 +30,7 @@ const {
     <LoadingScreen v-if="isLoading" />
 
     <template v-else>
-      <NavBar @open="open" />
+      <NavBar @open="open" @logout="logout" :currentUser />
 
       <ExploreView v-if="currentUser" :currentUser />
       <LandingView v-else @open="open" />

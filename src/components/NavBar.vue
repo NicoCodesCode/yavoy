@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useAuth } from '@/composables/useAuth'
 import type { AuthAction } from '@/composables/useAuth'
+import type { User } from 'firebase/auth'
 
+defineProps<{ currentUser: User | null }>()
 defineEmits<{
   open: [action: AuthAction]
+  logout: []
 }>()
-
-const { currentUser, logout } = useAuth()
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const { currentUser, logout } = useAuth()
     <button
       v-if="currentUser"
       class="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-zinc-200 text-zinc-600 rounded-sm hover:border-red-500 hover:bg-red-100 transition-all cursor-pointer"
-      @click="logout"
+      @click="$emit('logout')"
     >
       <i class="pi pi-sign-out text-sm" />
       Cerrar sesión
