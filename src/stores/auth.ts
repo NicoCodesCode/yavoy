@@ -119,7 +119,9 @@ export const useAuth = defineStore('auth', () => {
       const batch = writeBatch(db)
       batch.set(doc(db, 'users', currentUser.value.uid), {
         username,
+        fullname: null,
         role: 'client',
+        photoURL: null,
         createdAt: serverTimestamp(),
       })
       batch.set(doc(db, 'usernames', username), {
