@@ -5,12 +5,12 @@ import { getFirestore } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyB6cvkooTkpba943Rkq97YNk8KkQ2y_WQA',
-  authDomain: 'yavoy-f74c9.firebaseapp.com',
-  projectId: 'yavoy-f74c9',
-  storageBucket: 'yavoy-f74c9.firebasestorage.app',
-  messagingSenderId: '602940649800',
-  appId: '1:602940649800:web:6c2e6d1db38d2ab55e837d',
+  apiKey: 'AIzaSyDPHfU4kAsjfePVBzX0QxALooac9udIr5o',
+  authDomain: 'yavoy-53a3a.firebaseapp.com',
+  projectId: 'yavoy-53a3a',
+  storageBucket: 'yavoy-53a3a.firebasestorage.app',
+  messagingSenderId: '850758035188',
+  appId: '1:850758035188:web:444b89b27c0829a60260a1',
 }
 
 // Initialize Firebase
