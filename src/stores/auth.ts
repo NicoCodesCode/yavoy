@@ -65,12 +65,11 @@ export const useAuth = defineStore('auth', () => {
       const isNewUser = getAdditionalUserInfo(result)?.isNewUser
       if (isNewUser) {
         step.value = { stage: 'onboarding', action: null }
-        isSubmitting.value = false
+        return
       } else {
         close()
       }
     } catch (error) {
-      isSubmitting.value = false
       const { code } = error as FirebaseError
       const isIgnoredError =
         code === AuthErrorCodes.POPUP_CLOSED_BY_USER ||
@@ -78,6 +77,8 @@ export const useAuth = defineStore('auth', () => {
       if (!isIgnoredError) {
         errorMessage.value = getAuthErrorMessage(code)
       }
+    } finally {
+      isSubmitting.value = false
     }
   }
 
@@ -91,11 +92,11 @@ export const useAuth = defineStore('auth', () => {
       } else {
         await createUserWithEmailAndPassword(auth, email, password)
         step.value = { stage: 'onboarding', action: null }
-        isSubmitting.value = false
       }
     } catch (error) {
-      isSubmitting.value = false
       errorMessage.value = getAuthErrorMessage((error as FirebaseError).code)
+    } finally {
+      isSubmitting.value = false
     }
   }
 
