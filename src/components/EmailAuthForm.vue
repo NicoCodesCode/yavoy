@@ -3,7 +3,7 @@ import { useAuth } from '@/stores/auth'
 import { computed, ref, watch } from 'vue'
 import AuthDialogError from './AuthDialogError.vue'
 import SubmitButton from './SubmitButton.vue'
-import AuthTextInput from './AuthTextInput.vue'
+import TextInput from './TextInput.vue'
 
 const authStore = useAuth()
 
@@ -34,8 +34,8 @@ watch(
 
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-    <AuthTextInput label="Email" inputType="text" id="email" v-model="email" />
-    <AuthTextInput label="Contraseña" inputType="password" id="password" v-model="password" />
+    <TextInput label="Email" inputType="text" id="email" v-model="email" />
+    <TextInput label="Contraseña" inputType="password" id="password" v-model="password" />
     <AuthDialogError />
     <SubmitButton :isButtonDisabled :isSubmitting="authStore.isSubmitting">Continuar</SubmitButton>
   </form>
