@@ -14,6 +14,7 @@ import { auth, db } from '@/firebase'
 import { doc, getDoc, serverTimestamp, writeBatch } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 import type { AuthAction, AuthStep } from '@/types'
+import { useProfile } from '@/stores/profile'
 
 export const useAuth = defineStore('auth', () => {
   const step = ref<AuthStep>({ stage: 'idle', action: null })
@@ -25,11 +26,16 @@ export const useAuth = defineStore('auth', () => {
   const isJoining = computed(() => step.value.action === 'join')
 
   onAuthStateChanged(auth, async (user) => {
+    const profileStore = useProfile()
     if (user) {
       const userDoc = await getDoc(doc(db, 'users', user.uid))
       if (!userDoc.exists()) {
         step.value = { stage: 'onboarding', action: null }
+      } else {
+        await profileStore.fetchProfile(user.uid)
       }
+    } else {
+      profileStore.clearProfile()
     }
     currentUser.value = user
     isLoading.value = false
@@ -119,7 +125,7 @@ export const useAuth = defineStore('auth', () => {
       const batch = writeBatch(db)
       batch.set(doc(db, 'users', currentUser.value.uid), {
         username,
-        fullname: null,
+        fullName: null,
         role: 'client',
         photoURL: null,
         createdAt: serverTimestamp(),
@@ -128,6 +134,13 @@ export const useAuth = defineStore('auth', () => {
         uid: currentUser.value.uid,
       })
       await batch.commit()
+
+      const profileStore = useProfile()
+      profileStore.userProfile = {
+        username,
+        fullName: null,
+        photoURL: null,
+      }
 
       close()
     } finally {
@@ -165,8 +178,7 @@ export const useAuth = defineStore('auth', () => {
   }
 
   function validateUsername(username: string) {
-    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/
-    return usernameRegex.test(username)
+    return /^[a-zA-Z0-9_]{3,20}$/.test(username)
   }
 
   return {
