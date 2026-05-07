@@ -32,6 +32,6 @@ watch(
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
     <AuthTextInput label="Nombre de usuario" inputType="text" id="username" v-model="username" />
     <AuthDialogError />
-    <SubmitButton :isButtonDisabled />
+    <SubmitButton :isButtonDisabled :isSubmitting="authStore.isSubmitting">Continuar</SubmitButton>
   </form>
 </template>

@@ -37,6 +37,6 @@ watch(
     <AuthTextInput label="Email" inputType="text" id="email" v-model="email" />
     <AuthTextInput label="Contraseña" inputType="password" id="password" v-model="password" />
     <AuthDialogError />
-    <SubmitButton :isButtonDisabled />
+    <SubmitButton :isButtonDisabled :isSubmitting="authStore.isSubmitting">Continuar</SubmitButton>
   </form>
 </template>

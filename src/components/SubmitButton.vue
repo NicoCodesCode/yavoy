@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { useAuth } from '@/stores/auth'
-
-defineProps<{ isButtonDisabled: boolean }>()
-
-const authStore = useAuth()
+defineProps<{ isButtonDisabled: boolean; isSubmitting: boolean }>()
 </script>
 
 <template>
@@ -17,10 +13,12 @@ const authStore = useAuth()
         : ' bg-zinc-900 text-zinc-100 hover:bg-zinc-700 cursor-pointer'
     "
   >
-    <span v-if="authStore.isSubmitting" class="flex items-center justify-center gap-2">
+    <span v-if="isSubmitting" class="flex items-center justify-center gap-2">
       <i class="pi pi-spin pi-spinner text-sm" />
       Guardando...
     </span>
-    <span v-else>Continuar</span>
+    <span v-else>
+      <slot />
+    </span>
   </button>
 </template>
