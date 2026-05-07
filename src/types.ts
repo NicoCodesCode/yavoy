@@ -8,3 +8,9 @@ export type AuthStep = {
 }
 
 export type UserRole = 'client' | 'provider'
+
+export type UserProfile = {
+  username: string
+  fullName: string | null
+  photoURL: string | null
+}
