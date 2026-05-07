@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Dialog from 'primevue/dialog'
-import AuthDialogError from './AuthDialogError.vue'
+import ErrorMessage from './ErrorMessage.vue'
 import { useAuth } from '@/stores/auth'
 import AuthDialogHeader from './AuthDialogHeader.vue'
 import AuthOptions from './AuthOptions.vue'
@@ -23,7 +23,7 @@ const isVisible = computed(() => authStore.step.stage === 'selector')
     <div class="flex flex-col px-8 pt-8 pb-10 gap-6">
       <AuthDialogHeader />
       <AuthOptions />
-      <AuthDialogError />
+      <ErrorMessage :errorMessage="authStore.errorMessage" />
       <SwitchAuthActionText />
     </div>
   </Dialog>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuth } from '@/stores/auth'
-import AuthDialogError from './AuthDialogError.vue'
+import ErrorMessage from './ErrorMessage.vue'
 import SubmitButton from './SubmitButton.vue'
 import { computed, ref, watch } from 'vue'
 import TextInput from './TextInput.vue'
@@ -31,7 +31,7 @@ watch(
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
     <TextInput label="Nombre de usuario" inputType="text" id="username" v-model="username" />
-    <AuthDialogError />
+    <ErrorMessage :errorMessage="authStore.errorMessage" />
     <SubmitButton :isButtonDisabled :isSubmitting="authStore.isSubmitting">Continuar</SubmitButton>
   </form>
 </template>
