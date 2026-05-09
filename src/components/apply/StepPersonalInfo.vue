@@ -57,7 +57,6 @@ async function handlePhotoChange(e: Event) {
       </p>
     </div>
 
-    <!-- Photo upload -->
     <div class="flex flex-col gap-2">
       <label class="text-xs font-medium text-zinc-800 tracking-wide uppercase">
         Foto de perfil
