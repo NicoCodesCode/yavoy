@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/stores/auth'
 import { computed } from 'vue'
-import OutlinedButton from './OutlinedButton.vue'
+import OutlinedButton from '@/components/buttons/OutlinedButton.vue'
 
 const authStore = useAuth()
 

@@ -4,10 +4,10 @@ import { useAuth } from '@/stores/auth'
 import { useProfile } from '@/stores/profile'
 import { useRequireAuth } from '@/composables/useRequireAuth'
 import UserAvatar from '@/components/UserAvatar.vue'
-import SubmitButton from '@/components/SubmitButton.vue'
+import SubmitButton from '@/components/buttons/SubmitButton.vue'
 import TextInput from '@/components/TextInput.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
-import TextButton from '@/components/TextButton.vue'
+import TextButton from '@/components/buttons/TextButton.vue'
 
 useRequireAuth()
 

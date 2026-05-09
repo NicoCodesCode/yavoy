@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Dialog from 'primevue/dialog'
-import ErrorMessage from './ErrorMessage.vue'
+import ErrorMessage from '@/components/ErrorMessage.vue'
 import { useAuth } from '@/stores/auth'
 import AuthDialogHeader from './AuthDialogHeader.vue'
 import AuthOptions from './AuthOptions.vue'

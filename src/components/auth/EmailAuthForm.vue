@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useAuth } from '@/stores/auth'
 import { computed, ref, watch } from 'vue'
-import ErrorMessage from './ErrorMessage.vue'
-import SubmitButton from './SubmitButton.vue'
-import TextInput from './TextInput.vue'
+import ErrorMessage from '@/components/ErrorMessage.vue'
+import SubmitButton from '@/components/buttons/SubmitButton.vue'
+import TextInput from '@/components/TextInput.vue'
 
 const authStore = useAuth()
 
