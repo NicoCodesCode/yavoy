@@ -20,33 +20,6 @@ export async function uploadToCloudinary(
   return data.secure_url as string
 }
 
-export async function compressImage(file: File, maxWidthPx = 800, quality = 0.8): Promise<File> {
-  return new Promise((resolve) => {
-    const img = new Image()
-    const objectUrl = URL.createObjectURL(file)
-
-    img.onload = () => {
-      URL.revokeObjectURL(objectUrl)
-
-      const scale = Math.min(1, maxWidthPx / img.width)
-      const canvas = document.createElement('canvas')
-      canvas.width = img.width * scale
-      canvas.height = img.height * scale
-
-      const ctx = canvas.getContext('2d')!
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-
-      canvas.toBlob(
-        (blob) => resolve(new File([blob!], file.name, { type: 'image/jpeg' })),
-        'image/jpeg',
-        quality,
-      )
-    }
-
-    img.src = objectUrl
-  })
-}
-
 export function fileToDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
