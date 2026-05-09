@@ -5,7 +5,7 @@ import { useProfile } from '@/stores/profile'
 import UserAvatar from './UserAvatar.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import TextButton from './TextButton.vue'
+import TextButton from './buttons/TextButton.vue'
 
 const authStore = useAuth()
 const profileStore = useProfile()

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useAuth } from '@/stores/auth'
-import OutlinedButton from './OutlinedButton.vue'
+import OutlinedButton from './buttons/OutlinedButton.vue'
 import ProfilePopover from './ProfilePopover.vue'
 import { useProfile } from '@/stores/profile'
-import TextButton from './TextButton.vue'
+import TextButton from './buttons/TextButton.vue'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuth()
