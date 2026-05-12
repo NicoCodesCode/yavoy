@@ -30,6 +30,7 @@ export type ServiceCategory =
   | 'otro'
 
 export type ProviderApplication = {
+  uid: string
   fullName: string
   phone: string
   bio: string
@@ -40,4 +41,5 @@ export type ProviderApplication = {
   status: ApplicationStatus
   submittedAt: unknown
   rejectedAt: unknown | null
+  rejectionReason: string | null
 }

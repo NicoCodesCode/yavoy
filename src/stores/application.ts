@@ -8,7 +8,10 @@ import { uploadToCloudinary } from '@/utils/uploadToCloudinary'
 
 export type ApplicationStep = 1 | 2 | 3 | 4
 
-export type ApplicationFormData = Omit<ProviderApplication, 'status' | 'submittedAt' | 'rejectedAt'>
+export type ApplicationFormData = Omit<
+  ProviderApplication,
+  'uid' | 'status' | 'submittedAt' | 'rejectedAt' | 'rejectionReason'
+>
 
 export function validatePhone(phone: string): boolean {
   const digits = phone.replace(/[\s\-()+]/g, '')
@@ -101,7 +104,10 @@ export const useApplication = defineStore('application', () => {
     isLoadingApplication.value = true
     const appDoc = await getDoc(doc(db, 'providerApplications', authStore.currentUser.uid))
     if (appDoc.exists()) {
-      existingApplication.value = appDoc.data() as ProviderApplication
+      existingApplication.value = {
+        ...(appDoc.data() as Omit<ProviderApplication, 'uid'>),
+        uid: authStore.currentUser!.uid,
+      }
     }
     isLoadingApplication.value = false
   }
@@ -126,7 +132,7 @@ export const useApplication = defineStore('application', () => {
         c === 'otro' ? otherCategoryText.value.trim() : c,
       )
 
-      const data: ProviderApplication = {
+      const data: Omit<ProviderApplication, 'uid'> = {
         fullName: formData.value.fullName.trim(),
         phone: formData.value.phone.trim(),
         bio: formData.value.bio.trim(),
@@ -137,10 +143,11 @@ export const useApplication = defineStore('application', () => {
         status: 'pending',
         submittedAt: serverTimestamp(),
         rejectedAt: null,
+        rejectionReason: null,
       }
 
       await setDoc(doc(db, 'providerApplications', authStore.currentUser.uid), data)
-      existingApplication.value = { ...data, status: 'pending' }
+      existingApplication.value = { ...data, uid: authStore.currentUser.uid }
     } catch {
       errorMessage.value = 'No se pudo enviar tu solicitud. Intenta de nuevo.'
     } finally {
