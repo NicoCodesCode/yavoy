@@ -43,3 +43,34 @@ export type ProviderApplication = {
   rejectedAt: unknown | null
   rejectionReason: string | null
 }
+
+export type PriceType = 'fixed' | 'hourly'
+
+export type Service = {
+  id: string
+  providerId: string
+  title: string
+  description: string
+  price: number
+  priceType: PriceType
+  category: ServiceCategory
+  area: string
+  isActive: boolean
+  createdAt: unknown
+}
+
+export type BookingStatus = 'pending' | 'accepted' | 'rejected'
+
+export type Booking = {
+  id: string
+  serviceId: string
+  providerId: string
+  clientId: string
+  clientName: string
+  serviceName: string
+  date: unknown
+  description: string
+  status: BookingStatus
+  providerMessage: string | null
+  createdAt: unknown
+}
