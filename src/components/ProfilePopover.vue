@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Popover from 'primevue/popover'
 import { useAuth } from '@/stores/auth'
 import { useProfile } from '@/stores/profile'
 import UserAvatar from './UserAvatar.vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import TextButton from './buttons/TextButton.vue'
 
 const authStore = useAuth()
@@ -21,6 +21,11 @@ async function goToProfile() {
   if (!profileStore.userProfile) return
   popover.value.hide()
   await router.push({ name: 'profile', params: { username: profileStore.userProfile.username } })
+}
+
+async function goToDashboard() {
+  popover.value.hide()
+  await router.push({ name: 'dashboard' })
 }
 
 async function handleLogout() {
@@ -45,9 +50,9 @@ async function handleLogout() {
       <div class="flex items-center gap-3 px-4 py-3 border-b border-zinc-100">
         <UserAvatar />
         <div class="flex flex-col min-w-0">
-          <span class="text-sm font-semibold text-zinc-900 truncate">{{
-            profileStore.userProfile?.username
-          }}</span>
+          <span class="text-sm font-semibold text-zinc-900 truncate">
+            {{ profileStore.userProfile?.username }}
+          </span>
           <span class="text-xs text-zinc-400 truncate">{{ authStore.currentUser?.email }}</span>
         </div>
       </div>
@@ -57,7 +62,15 @@ async function handleLogout() {
           <i class="pi pi-user text-sm" />
           Mi perfil
         </TextButton>
-        <TextButton class="flex items-center gap-2.5" @click="handleLogout">
+        <TextButton
+          v-if="profileStore.userProfile?.role === 'provider'"
+          class="flex items-center gap-2.5"
+          @click="goToDashboard"
+        >
+          <i class="pi pi-th-large text-sm" />
+          Mi panel
+        </TextButton>
+        <TextButton class="flex items-center gap-2.5 text-red-500!" @click="handleLogout">
           <i class="pi pi-sign-out text-sm" />
           Cerrar sesión
         </TextButton>

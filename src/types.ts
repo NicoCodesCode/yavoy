@@ -13,6 +13,7 @@ export type UserProfile = {
   username: string
   fullName: string | null
   photoURL: string | null
+  role: UserRole
 }
 
 export type ApplicationStatus = 'pending' | 'approved' | 'rejected'

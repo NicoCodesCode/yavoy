@@ -36,6 +36,7 @@ export const useProfile = defineStore('profile', () => {
         username: data.username,
         fullName: data.fullName ?? null,
         photoURL: data.photoURL ?? null,
+        role: data.role,
       }
     }
     isLoadingProfile.value = false
