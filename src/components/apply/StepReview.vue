@@ -1,24 +1,8 @@
 <script setup lang="ts">
 import { useApplication } from '@/stores/application'
+import { getCategoryLabel } from '@/utils/categories'
 
 const appStore = useApplication()
-
-const categoryLabels: Record<string, string> = {
-  plomeria: 'Plomería',
-  electricidad: 'Electricidad',
-  carpinteria: 'Carpintería',
-  pintura: 'Pintura',
-  albanileria: 'Albañilería',
-  tecnologia: 'Tecnología',
-  limpieza: 'Limpieza',
-  cerrajeria: 'Cerrajería',
-  reparaciones_generales: 'Reparaciones generales',
-}
-
-function getCategoryLabel(value: string) {
-  if (value === 'otro') return appStore.otherCategoryText.trim() || 'Otro'
-  return categoryLabels[value] ?? value
-}
 </script>
 
 <template>

@@ -1,21 +1,9 @@
 <script setup lang="ts">
 import { useApplication } from '@/stores/application'
 import type { ServiceCategory } from '@/types'
+import { CATEGORIES } from '@/utils/categories'
 
 const appStore = useApplication()
-
-const categories: { value: ServiceCategory; label: string; icon: string }[] = [
-  { value: 'plomeria', label: 'Plomería', icon: 'pi-wrench' },
-  { value: 'electricidad', label: 'Electricidad', icon: 'pi-bolt' },
-  { value: 'carpinteria', label: 'Carpintería', icon: 'pi-objects-column' },
-  { value: 'pintura', label: 'Pintura', icon: 'pi-palette' },
-  { value: 'albanileria', label: 'Albañilería', icon: 'pi-building' },
-  { value: 'tecnologia', label: 'Tecnología', icon: 'pi-desktop' },
-  { value: 'limpieza', label: 'Limpieza', icon: 'pi-sparkles' },
-  { value: 'cerrajeria', label: 'Cerrajería', icon: 'pi-key' },
-  { value: 'reparaciones_generales', label: 'Reparaciones generales', icon: 'pi-hammer' },
-  { value: 'otro', label: 'Otro', icon: 'pi-plus-circle' },
-]
 
 function isSelected(value: ServiceCategory) {
   return appStore.formData.categories.includes(value)
@@ -33,7 +21,7 @@ function isSelected(value: ServiceCategory) {
 
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
       <button
-        v-for="cat in categories"
+        v-for="cat in CATEGORIES"
         :key="cat.value"
         type="button"
         class="flex flex-col items-center justify-center gap-2 p-4 border rounded-sm text-sm font-medium transition-all cursor-pointer"

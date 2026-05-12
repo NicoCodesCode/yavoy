@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useAdmin } from '@/stores/admin'
 import type { ProviderApplication } from '@/types'
+import { getCategoryLabel } from '@/utils/categories'
 
 const props = defineProps<{ application: ProviderApplication }>()
 
@@ -11,22 +12,6 @@ const isApproving = ref(false)
 const isRejecting = ref(false)
 const showRejectForm = ref(false)
 const rejectionReason = ref('')
-
-const categoryLabels: Record<string, string> = {
-  plomeria: 'Plomería',
-  electricidad: 'Electricidad',
-  carpinteria: 'Carpintería',
-  pintura: 'Pintura',
-  albanileria: 'Albañilería',
-  tecnologia: 'Tecnología',
-  limpieza: 'Limpieza',
-  cerrajeria: 'Cerrajería',
-  reparaciones_generales: 'Reparaciones generales',
-}
-
-function getCategoryLabel(value: string) {
-  return categoryLabels[value] ?? value
-}
 
 async function handleApprove() {
   isApproving.value = true
