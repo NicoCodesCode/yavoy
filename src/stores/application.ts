@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useAuth } from '@/stores/auth'
 import type { ProviderApplication, ServiceCategory } from '@/types'
@@ -147,6 +147,9 @@ export const useApplication = defineStore('application', () => {
       }
 
       await setDoc(doc(db, 'providerApplications', authStore.currentUser.uid), data)
+      await updateDoc(doc(db, 'users', authStore.currentUser.uid), {
+        fullName: formData.value.fullName.trim(),
+      })
       existingApplication.value = { ...data, uid: authStore.currentUser.uid }
     } catch {
       errorMessage.value = 'No se pudo enviar tu solicitud. Intenta de nuevo.'
