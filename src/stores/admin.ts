@@ -36,17 +36,13 @@ export const useAdmin = defineStore('admin', () => {
   }
 
   async function approveApplication(uid: string) {
-    try {
-      await updateDoc(doc(db, 'providerApplications', uid), {
-        status: 'approved',
-      })
-      await updateDoc(doc(db, 'users', uid), {
-        role: 'provider',
-      })
-      applications.value = applications.value.filter((a) => a.uid !== uid)
-    } catch {
-      errorMessage.value = 'No se pudo aprobar la solicitud.'
-    }
+    const application = applications.value.find((a) => a.uid === uid)
+    await updateDoc(doc(db, 'providerApplications', uid), { status: 'approved' })
+    await updateDoc(doc(db, 'users', uid), {
+      role: 'provider',
+      photoURL: application?.photoURL ?? null,
+    })
+    applications.value = applications.value.filter((a) => a.uid !== uid)
   }
 
   async function rejectApplication(uid: string, reason: string) {
