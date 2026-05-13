@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExploreView from './ExploreView.vue'
+import BrowseView from './BrowseView.vue'
 import LandingView from './LandingView.vue'
 import AuthSelectorDialog from '@/components/auth/AuthSelectorDialog.vue'
 import EmailAuthDialog from '@/components/auth/EmailAuthDialog.vue'
@@ -10,7 +10,7 @@ const authStore = useAuth()
 </script>
 
 <template>
-  <ExploreView v-if="authStore.currentUser" />
+  <BrowseView v-if="authStore.currentUser" />
   <LandingView v-else />
 
   <AuthSelectorDialog />
