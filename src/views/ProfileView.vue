@@ -184,7 +184,7 @@ async function saveProfile() {
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-2xl font-semibold text-zinc-900">@{{ publicProfile.username }}</h2>
+            <h2 class="text-2xl font-semibold text-zinc-900">{{ publicProfile.fullName }}</h2>
             <span
               v-if="publicProfile.role === 'provider'"
               class="text-xs px-2 py-0.5 bg-[#1dbf73]/10 text-[#1dbf73] rounded-full font-medium border border-[#1dbf73]/20"
@@ -192,9 +192,7 @@ async function saveProfile() {
               Prestador verificado
             </span>
           </div>
-          <p v-if="publicProfile.fullName" class="text-sm text-zinc-500 mt-0.5">
-            {{ publicProfile.fullName }}
-          </p>
+          <p class="text-sm text-zinc-500 mt-0.5">@{{ publicProfile.username }}</p>
         </div>
       </div>
 
