@@ -5,6 +5,7 @@ import { db } from '@/firebase'
 import { useAuth } from '@/stores/auth'
 import type { ProviderApplication, ServiceCategory } from '@/types'
 import { uploadToCloudinary } from '@/utils/uploadToCloudinary'
+import { useProfile } from './profile'
 
 export type ApplicationStep = 1 | 2 | 3 | 4
 
@@ -147,10 +148,16 @@ export const useApplication = defineStore('application', () => {
       }
 
       await setDoc(doc(db, 'providerApplications', authStore.currentUser.uid), data)
+      existingApplication.value = { ...data, uid: authStore.currentUser.uid }
+
       await updateDoc(doc(db, 'users', authStore.currentUser.uid), {
         fullName: formData.value.fullName.trim(),
       })
-      existingApplication.value = { ...data, uid: authStore.currentUser.uid }
+
+      const profileStore = useProfile()
+      if (profileStore.userProfile) {
+        profileStore.userProfile.fullName = formData.value.fullName.trim()
+      }
     } catch {
       errorMessage.value = 'No se pudo enviar tu solicitud. Intenta de nuevo.'
     } finally {
