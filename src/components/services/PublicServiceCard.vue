@@ -1,22 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Service } from '@/types'
 import { getCategoryLabel } from '@/utils/categories'
-import { useRouter } from 'vue-router'
 import { useAuth } from '@/stores/auth'
 
 const props = defineProps<{ service: Service }>()
 const emit = defineEmits<{ book: [service: Service] }>()
 
 const authStore = useAuth()
-const router = useRouter()
 
-function handleBook() {
-  if (!authStore.currentUser) {
-    router.push({ name: 'home' })
-    return
-  }
-  emit('book', props.service)
-}
+const isOwnService = computed(() => authStore.currentUser?.uid === props.service.providerId)
 </script>
 
 <template>
@@ -44,11 +37,13 @@ function handleBook() {
     </div>
 
     <button
+      v-if="!isOwnService"
       class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium bg-[#1dbf73] text-white rounded-sm hover:bg-[#19a863] transition-colors cursor-pointer"
-      @click="handleBook"
+      @click="emit('book', service)"
     >
       <i class="pi pi-calendar text-sm" />
       Reservar
     </button>
+    <p v-else class="text-xs text-zinc-400 text-center">Este es tu servicio</p>
   </div>
 </template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useServices } from '@/stores/services'
+import { useProfile } from '@/stores/profile'
 import type { Service, ServiceCategory, PriceType } from '@/types'
-import TextInput from '@/components/TextInput.vue'
 import { CATEGORIES } from '@/utils/categories'
+import TextInput from '@/components/TextInput.vue'
 
 const props = defineProps<{
   editingService?: Service | null
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const servicesStore = useServices()
+const profileStore = useProfile()
 
 const PRICE_TYPES: { value: PriceType; label: string }[] = [
   { value: 'fixed', label: 'Precio fijo' },
@@ -56,7 +58,10 @@ async function handleSubmit() {
     if (isEditing.value && props.editingService) {
       await servicesStore.updateService(props.editingService.id, data)
     } else {
-      await servicesStore.createService(data)
+      await servicesStore.createService({
+        ...data,
+        providerUsername: profileStore.userProfile?.username ?? '',
+      })
     }
     emit('close')
   } finally {
@@ -118,11 +123,10 @@ async function handleSubmit() {
             type="number"
             min="1"
             placeholder="0"
-            class="flex-1 px-2 py-2.5 text-sm text-zinc-800 bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            class="flex-1 px-2 py-2.5 text-sm text-zinc-800 bg-transparent outline-none"
           />
         </div>
       </div>
-
       <div class="flex flex-col gap-1.5 w-36">
         <label for="priceType" class="text-xs font-medium text-zinc-800 tracking-wide uppercase">
           Tipo

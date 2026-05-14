@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useServices } from '@/stores/services'
-import { useRouter } from 'vue-router'
-import { CATEGORIES, getCategoryLabel } from '@/utils/categories'
+import { CATEGORIES } from '@/utils/categories'
+import BookingDialog from '@/components/bookings/BookingDialog.vue'
 import PublicServiceCard from '@/components/services/PublicServiceCard.vue'
 import type { Service, ServiceCategory } from '@/types'
 
 const servicesStore = useServices()
-const router = useRouter()
 
 const selectedCategory = ref<ServiceCategory | ''>('')
 const areaInput = ref('')
 const sortByPrice = ref<'asc' | 'desc' | ''>('')
-
 const isSearching = ref(false)
+
+const bookingDialogVisible = ref(false)
+const selectedService = ref<Service | null>(null)
 
 async function search() {
   isSearching.value = true
@@ -23,6 +24,13 @@ async function search() {
     sortByPrice: sortByPrice.value || undefined,
   })
   isSearching.value = false
+}
+
+function clearFilters() {
+  selectedCategory.value = ''
+  areaInput.value = ''
+  sortByPrice.value = ''
+  search()
 }
 
 function clearArea() {
@@ -35,26 +43,19 @@ function clearCategory() {
   search()
 }
 
-function clearFilters() {
-  selectedCategory.value = ''
-  areaInput.value = ''
-  sortByPrice.value = ''
-  search()
-}
-
-onMounted(() => search())
-
 function handleBook(service: Service) {
-  // To be wired up
-  router.push({ name: 'profile', params: { username: service.providerId } })
+  selectedService.value = service
+  bookingDialogVisible.value = true
 }
+
+defineExpose({ search })
 </script>
 
 <template>
   <main class="flex-1 max-w-5xl mx-auto w-full px-6 py-12">
     <div class="flex flex-col gap-8">
       <div>
-        <p class="text-xs tracking-widest text-[#1dbf73] font-medium mb-1">YaVoy!</p>
+        <p class="text-xs tracking-widest uppercase text-[#1dbf73] font-medium mb-1">YaVoy!</p>
         <h1 class="text-3xl font-semibold text-zinc-900">Explorar servicios</h1>
       </div>
 
@@ -65,7 +66,11 @@ function handleBook(service: Service) {
           @change="search"
         >
           <option value="">Todas las categorías</option>
-          <option v-for="cat in CATEGORIES" :key="cat.value" :value="cat.value">
+          <option
+            v-for="cat in CATEGORIES.filter((c) => c.value !== 'otro')"
+            :key="cat.value"
+            :value="cat.value"
+          >
             {{ cat.label }}
           </option>
         </select>
@@ -121,7 +126,7 @@ function handleBook(service: Service) {
           v-if="selectedCategory"
           class="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-100 text-zinc-600 text-xs rounded-full"
         >
-          {{ getCategoryLabel(selectedCategory) }}
+          {{ CATEGORIES.find((c) => c.value === selectedCategory)?.label }}
           <button class="cursor-pointer hover:text-zinc-900" @click="clearCategory">
             <i class="pi pi-times text-xs" />
           </button>
@@ -192,4 +197,6 @@ function handleBook(service: Service) {
       </div>
     </div>
   </main>
+
+  <BookingDialog v-model:visible="bookingDialogVisible" :service="selectedService" />
 </template>

@@ -28,6 +28,11 @@ async function goToDashboard() {
   await router.push({ name: 'dashboard' })
 }
 
+async function goToBookings() {
+  popover.value.hide()
+  await router.push({ name: 'bookings' })
+}
+
 async function handleLogout() {
   popover.value.hide()
   await authStore.logout()
@@ -69,6 +74,10 @@ async function handleLogout() {
         >
           <i class="pi pi-th-large text-sm" />
           Mi panel
+        </TextButton>
+        <TextButton class="flex items-center gap-2.5" @click="goToBookings">
+          <i class="pi pi-calendar text-sm" />
+          Mis reservas
         </TextButton>
         <TextButton class="flex items-center gap-2.5 text-red-500!" @click="handleLogout">
           <i class="pi pi-sign-out text-sm" />

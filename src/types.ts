@@ -50,6 +50,7 @@ export type PriceType = 'fixed' | 'hourly'
 export type Service = {
   id: string
   providerId: string
+  providerUsername: string
   title: string
   description: string
   price: number

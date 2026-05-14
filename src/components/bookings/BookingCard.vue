@@ -126,7 +126,7 @@ async function submitResponse() {
     <div v-if="booking.status === 'pending'" class="pt-1 border-t border-zinc-100">
       <div v-if="!showResponseForm" class="flex gap-3">
         <button
-          class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#1dbf73] text-zinc-900 rounded-sm hover:bg-[#19a863] transition-colors cursor-pointer"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#1dbf73] text-white rounded-sm hover:bg-[#19a863] transition-colors cursor-pointer"
           @click="openResponseForm('accepted')"
         >
           <i class="pi pi-check text-sm" />
@@ -162,7 +162,7 @@ async function submitResponse() {
               !isMessageValid || isResponding
                 ? 'bg-zinc-100 text-zinc-300 cursor-not-allowed'
                 : respondingAs === 'accepted'
-                  ? 'bg-[#1dbf73] text-zinc-900 hover:bg-[#19a863]'
+                  ? 'bg-[#1dbf73] text-white hover:bg-[#19a863]'
                   : 'bg-red-500 text-white hover:bg-red-600'
             "
             :disabled="!isMessageValid || isResponding"

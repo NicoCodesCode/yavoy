@@ -93,7 +93,7 @@ function closeForm() {
           Reservas
           <span
             v-if="bookingsStore.providerBookings.filter((b) => b.status === 'pending').length"
-            class="px-1.5 py-0.5 text-xs bg-[#1dbf73] text-zinc-900 rounded-full font-semibold"
+            class="px-1.5 py-0.5 text-xs bg-[#1dbf73] text-white rounded-full font-semibold"
           >
             {{ bookingsStore.providerBookings.filter((b) => b.status === 'pending').length }}
           </span>
